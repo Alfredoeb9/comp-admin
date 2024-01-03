@@ -1,18 +1,16 @@
 "use client";
 import {Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button, DropdownItem, DropdownTrigger, Dropdown, DropdownMenu} from "@nextui-org/react";
-// import Link from "next/link";
 import { useSession } from 'next-auth/react';
 
 
 export default function Header() {
     const { data: data, status } = useSession();
 
-    console.log("status", status)
     return (
         <header>
             <Navbar>
                 <NavbarBrand>
-                    <p className="font-bold text-inherit">MLG</p>
+                    <Link href="/" className="font-bold text-inherit">MLG</Link>
                 </NavbarBrand>
                 <NavbarContent className="hidden sm:flex gap-4" justify="center">
                     {status === "authenticated" && data !== undefined ? (
@@ -34,7 +32,7 @@ export default function Header() {
                     ) : (
                         <>
                             <NavbarItem className="hidden lg:flex">
-                                <Link href="#">Login</Link>
+                                <Link href="/auth/sign-in">Login</Link>
                             </NavbarItem>
                             <NavbarItem>
                                 <Button as={Link} color="primary" href="#" variant="flat">
