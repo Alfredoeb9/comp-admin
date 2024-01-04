@@ -67,7 +67,8 @@ export const options: NextAuthOptions = {
                 return {
                     id: `123`,
                     username: 'test123',
-                    email: 'test123@gmail.com'
+                    email: 'test123@gmail.com',
+                    role: 'user'
                 }
             }
         })
@@ -85,22 +86,26 @@ export const options: NextAuthOptions = {
         signIn: "/auth/sign-in"
     },
     callbacks: {
-        // async jwt({token, account, user}) {   
-        //     if (user){
-        //         return {
-        //             ...token,
-        //             username: (user as User).username
-        //         }
-        //     }  
-        //     if (account) {
-        //         token.accessToken = account.access_token;
-        //         token.id = token.id;
-        //         token.username = (user as User).username
+        async jwt({token, account, user}) {   
+            
+            if (user){
+                console.log("user>>>>>", user)
+                return {
+                    ...token,
+                    role: "user"
+                    // username: (user as User).username
+                }
+            }  
+            if (account) {
+                token.accessToken = account.access_token;
+                token.id = token.id;
+                token.role = "user"
+                // token.username = (user as User).username
 
-        //     }
+            }
 
-        //     return token
-        // },
+            return token
+        },
         async session({session, token}) {
             return {
                 ...session,
@@ -108,6 +113,7 @@ export const options: NextAuthOptions = {
                 user: {
                     ...session.user,
                     username: token.username,
+                    role: "user"
                     
                 }
             }
