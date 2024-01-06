@@ -16,6 +16,8 @@ import { useSession } from "next-auth/react";
 export default function Header() {
   const { data: data, status } = useSession();
 
+  console.log("data", data)
+
   return (
     <header>
       <Navbar>
@@ -24,8 +26,8 @@ export default function Header() {
             MLG
           </Link>
         </NavbarBrand>
-        <NavbarContent className="hidden sm:flex gap-4" justify="center">
-          {status === "authenticated" && data !== undefined ? (
+        <NavbarContent className="gap-4" justify="center">
+          {status === "authenticated" && data !== undefined  && data.user.role === 'admin' ? (
             <Dropdown>
               <NavbarItem>
                 <DropdownTrigger>

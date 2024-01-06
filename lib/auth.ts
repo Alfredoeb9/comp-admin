@@ -5,14 +5,18 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import db from "./db";
 // import { useAppDispatch } from "../src/app/redux/hooks";
-import { useState } from "react";
+// import { useState } from "react";
 // import { login } from "../src/app/redux/features/AuthContext";
 // import { compare } from "bcrypt";
 import { User } from "@prisma/client";
 import { NextAuthOptions } from "next-auth";
-// import validator from "validator";
+import validator from "validator";
+import { compare } from "bcrypt";
 
 export const options: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
+  adapter: PrismaAdapter(db),
+
   providers: [
     // EmailProvider({
     // 	server: process.env.EMAIL_SERVER,
@@ -28,55 +32,48 @@ export const options: NextAuthOptions = {
       },
       async authorize(credentials) {
         // Add logic here to look up the user from the credentials supplied
-        // if (!credentials?.email || !credentials?.password) {
-        //     throw new Error("Email and or password is not registered");
-        // }
+        if (!credentials?.email || !credentials?.password) {
+            throw new Error("Email and or password is not registered");
+        }
 
-        // if (!validator.isEmail(credentials?.email )) throw new Error("Please provide a proper email");
+        if (!validator.isEmail(credentials?.email )) throw new Error("Please provide a proper email");
 
-        // const existingUserByEmail = await db.user.findUnique({
-        //     where: {
-        //         email: credentials.email,
-        //     }
-        // });
+        const existingUserByEmail = await db.user.findUnique({
+            where: {
+                email: credentials.email,
+            }
+        });
 
-        // if (!existingUserByEmail){
-        //     throw new Error("Email and or password is not registered");
-        // }
+        if (!existingUserByEmail){
+            throw new Error("Email and or password is not registered");
+        }
 
-        // const passwordMatch = await compare(credentials.password, existingUserByEmail.password);
+        const passwordMatch = await compare(credentials.password, existingUserByEmail.password);
 
-        // if (!passwordMatch) {
-        //     throw new Error("Email and or password is not registered");
-        // }
+        if (!passwordMatch) {
+            throw new Error("Email and or password is not registered");
+        }
 
-        // if (existingUserByEmail.isVerified == false) {
-        //     throw new Error('Email is not verified, Please verify email!')
-        //     // return NextResponse.json({ user: null, message: "Email is not verified, Please verify email!"}, { status: 500 })
-        // };
-
-        // // localStorage.setItem("user", JSON.stringify(existingUserByEmail));
-        // // dispatch(login(existingUserByEmail));
-        // console.log("passing")
-        // return {
-        //     id: `${existingUserByEmail.id}`,
-        //     username: existingUserByEmail.username,
-        //     email: existingUserByEmail.email
-        // }
-        return {
-          id: `123`,
-          username: "test123",
-          email: "test123@gmail.com",
-          role: "user",
+        if (existingUserByEmail.isVerified == false) {
+            throw new Error('Email is not verified, Please verify email!')
+            // return NextResponse.json({ user: null, message: "Email is not verified, Please verify email!"}, { status: 500 })
         };
+
+        // localStorage.setItem("user", JSON.stringify(existingUserByEmail));
+        // dispatch(login(existingUserByEmail));
+        return {
+          id: `${existingUserByEmail.id}`,
+          username: existingUserByEmail.username,
+          email: existingUserByEmail.email,
+          role: `${existingUserByEmail.role}`
+        }
       },
     }),
   ],
   jwt: {
     maxAge: 24 * 60 * 60 * 1000,
   },
-  secret: process.env.NEXTAUTH_SECRET,
-  adapter: PrismaAdapter(db),
+  
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60,
@@ -111,6 +108,7 @@ export const options: NextAuthOptions = {
           ...session.user,
           username: token.username,
           role: token.role,
+          id: 'testing',
         },
       };
     },

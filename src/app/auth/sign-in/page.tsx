@@ -1,5 +1,6 @@
 "use client";
 
+import { getSession, signIn } from "next-auth/react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -32,49 +33,49 @@ export default function SignIn() {
 
     const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		// setLoading(true);
-        // try {
-		// 	if (email === "" || password === "") {
-		// 		return setError("Please provide a email and password")
-		// 	}
-		// 	const signInData = await signIn("credentials", 
-		// 		{ email: email, password: password, redirect: false
-		// 	}).then(async (res) => {
-		// 		console.log("false")
-		// 		setVerifyEmail(false);
-		// 		if (!res) return null;
+		setLoading(true);
+        try {
+			if (email === "" || password === "") {
+				return setError("Please provide a email and password")
+			}
+			const signInData = await signIn("credentials", 
+				{ email: email, password: password, redirect: false
+			}).then(async (res) => {
+				console.log("false")
+				setVerifyEmail(false);
+				if (!res) return null;
 
-		// 		if (res?.ok === false) {
-		// 			console.log("false")
-		// 			if (!res.error) return null
-		// 			setError(res?.error)
-		// 			if (res?.error.includes("Email is not verified")) {
-		// 				setVerifyEmail(true);
-		// 			}
-		// 			return null
-		// 		}
+				if (res?.ok === false) {
+					console.log("false")
+					if (!res.error) return null
+					setError(res?.error)
+					if (res?.error.includes("Email is not verified")) {
+						setVerifyEmail(true);
+					}
+					return null
+				}
 
-		// 		const session = await getSession();
+				const session = await getSession();
 
-		// 		if (!session) return setError(`Error: cannot find user`)
+				if (!session) return setError(`Error: cannot find user`)
 
-		// 		setError("");
-		// 		setVerifyEmail(false);
-		// 		dispatch(login(session as any));
-		// 		return session
-		// 	}).catch((error) => {
-		// 		console.log("error", error)
-		// 		return setError(error);
-		// 	});
+				setError("");
+				setVerifyEmail(false);
+				// dispatch(login(session as any));
+				return session
+			}).catch((error) => {
+				console.log("error", error)
+				return setError(error);
+			});
 		
-		// 	return signInData;
+			return signInData;
 
-		// 	// localStorage.setItem("user", JSON.stringify(user));
+			// localStorage.setItem("user", JSON.stringify(user));
 			
-		// } catch (error: any) {
-		// 	console.log("error2", error)
-		// 	return setError(error)		
-		// }
+		} catch (error: any) {
+			console.log("error2", error)
+			return setError(error)		
+		}
     }
 
 	const resendEmail = async (e: any) => {
