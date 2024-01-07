@@ -35,14 +35,19 @@ export default function Header() {
                     <Button>Create</Button>
                   </DropdownTrigger>
                 </NavbarItem>
-                <DropdownMenu>
+                <DropdownMenu aria-label="create">
                   <DropdownItem
                     key="tournaments"
                     className="test hover:border-pink-500 hover:border-2"
+                    aria-label="tournaments"
                   >
                     <Link href="/create/tournaments">Tournaments</Link>
                   </DropdownItem>
-                  <DropdownItem className=" border-pink-700" key="game_category">
+                  <DropdownItem 
+                    className=" border-pink-700" 
+                    key="game_category"
+                    aria-label="game_category"
+                  >
                     <Link
                       className=" border-pink-700"
                       href="/create/game-category"
