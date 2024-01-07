@@ -11,7 +11,7 @@ import {
   Dropdown,
   DropdownMenu,
 } from "@nextui-org/react";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 export default function Header() {
   const { data: data, status } = useSession();
@@ -28,29 +28,35 @@ export default function Header() {
         </NavbarBrand>
         <NavbarContent className="gap-4" justify="center">
           {status === "authenticated" && data !== undefined  && data.user.role === 'admin' ? (
-            <Dropdown>
-              <NavbarItem>
-                <DropdownTrigger>
-                  <Button>Create</Button>
-                </DropdownTrigger>
-              </NavbarItem>
-              <DropdownMenu>
-                <DropdownItem
-                  key="tournaments"
-                  className="test hover:border-pink-500 hover:border-2"
-                >
-                  <Link href="/create/tournaments">Tournaments</Link>
-                </DropdownItem>
-                <DropdownItem className=" border-pink-700" key="game_category">
-                  <Link
-                    className=" border-pink-700"
-                    href="/create/game-category"
+            <>
+              <Dropdown>
+                <NavbarItem>
+                  <DropdownTrigger>
+                    <Button>Create</Button>
+                  </DropdownTrigger>
+                </NavbarItem>
+                <DropdownMenu>
+                  <DropdownItem
+                    key="tournaments"
+                    className="test hover:border-pink-500 hover:border-2"
                   >
-                    Game Category
-                  </Link>
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
+                    <Link href="/create/tournaments">Tournaments</Link>
+                  </DropdownItem>
+                  <DropdownItem className=" border-pink-700" key="game_category">
+                    <Link
+                      className=" border-pink-700"
+                      href="/create/game-category"
+                    >
+                      Game Category
+                    </Link>
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+              <NavbarItem>
+                <Button as={Link} color="primary" onClick={() => { signOut()}} variant="flat">Log Out</Button>
+              </NavbarItem>
+            </>
+            
           ) : (
             <>
               <NavbarItem>
