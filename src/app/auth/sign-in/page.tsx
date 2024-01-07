@@ -1,13 +1,14 @@
 "use client";
 
-import { getSession, signIn } from "next-auth/react";
+import { getSession, signIn, useSession } from "next-auth/react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useRouter } from 'next/navigation'
 
 export default function SignIn() {
+	const { data: data, status } = useSession();
     // const dispatch = useAppDispatch()
-	// const router = useRouter();
+	const router = useRouter();
     const [email, setEmail] = useState<string>("");
 	// const user = useAppSelector(state => state.authXReducer.user);
     const [loading, setLoading] = useState<boolean>(false);
@@ -20,9 +21,13 @@ export default function SignIn() {
 	// const { resend, error2, isLoading2 } = useResend();
 	const [show, setShow] = useState<any>({ password: false });
 
-	// if (user.user !== null) {
-	// 	redirect("/")
-	// }
+	useEffect(() => {
+		if (data?.user.role === 'admin') {
+			return router.push("/")
+		}
+	}, [data])
+
+	
 	
 	// useEffect(() => {
 	// 	if (error2) {	
