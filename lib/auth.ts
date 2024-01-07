@@ -1,17 +1,17 @@
-import EmailProvider from "next-auth/providers/email";
-import CredentialsProvider from "next-auth/providers/credentials";
+import EmailProvider from 'next-auth/providers/email';
+import CredentialsProvider from 'next-auth/providers/credentials';
 
 // import { AuthOptions } from "next-auth";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import db from "./db";
+import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import db from './db';
 // import { useAppDispatch } from "../src/app/redux/hooks";
 // import { useState } from "react";
 // import { login } from "../src/app/redux/features/AuthContext";
 // import { compare } from "bcrypt";
-import { User } from "@prisma/client";
-import { NextAuthOptions } from "next-auth";
-import validator from "validator";
-import { compare } from "bcrypt";
+import { User } from '@prisma/client';
+import { NextAuthOptions } from 'next-auth';
+import validator from 'validator';
+import { compare } from 'bcrypt';
 
 export const options: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -24,40 +24,44 @@ export const options: NextAuthOptions = {
     // })
 
     CredentialsProvider({
-      name: "Credentials",
+      name: 'Credentials',
 
       credentials: {
-        email: { label: "Email", type: "email", placeholder: "jsmith" },
-        password: { label: "Password", type: "password" },
+        email: { label: 'Email', type: 'email', placeholder: 'jsmith' },
+        password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
         // Add logic here to look up the user from the credentials supplied
         if (!credentials?.email || !credentials?.password) {
-            throw new Error("Email and or password is not registered");
+          throw new Error('Email and or password is not registered');
         }
 
-        if (!validator.isEmail(credentials?.email )) throw new Error("Please provide a proper email");
+        if (!validator.isEmail(credentials?.email))
+          throw new Error('Please provide a proper email');
 
         const existingUserByEmail = await db.user.findUnique({
-            where: {
-                email: credentials.email,
-            }
+          where: {
+            email: credentials.email,
+          },
         });
 
-        if (!existingUserByEmail){
-            throw new Error("Email and or password is not registered");
+        if (!existingUserByEmail) {
+          throw new Error('Email and or password is not registered');
         }
 
-        const passwordMatch = await compare(credentials.password, existingUserByEmail.password);
+        const passwordMatch = await compare(
+          credentials.password,
+          existingUserByEmail.password
+        );
 
         if (!passwordMatch) {
-            throw new Error("Email and or password is not registered");
+          throw new Error('Email and or password is not registered');
         }
 
         if (existingUserByEmail.isVerified == false) {
-            throw new Error('Email is not verified, Please verify email!')
-            // return NextResponse.json({ user: null, message: "Email is not verified, Please verify email!"}, { status: 500 })
-        };
+          throw new Error('Email is not verified, Please verify email!');
+          // return NextResponse.json({ user: null, message: "Email is not verified, Please verify email!"}, { status: 500 })
+        }
 
         // localStorage.setItem("user", JSON.stringify(existingUserByEmail));
         // dispatch(login(existingUserByEmail));
@@ -65,21 +69,21 @@ export const options: NextAuthOptions = {
           id: `${existingUserByEmail.id}`,
           username: existingUserByEmail.username,
           email: existingUserByEmail.email,
-          role: `${existingUserByEmail.role}`
-        }
+          role: `${existingUserByEmail.role}`,
+        };
       },
     }),
   ],
   jwt: {
     maxAge: 24 * 60 * 60 * 1000,
   },
-  
+
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60,
   },
   pages: {
-    signIn: "/auth/sign-in",
+    signIn: '/auth/sign-in',
   },
   callbacks: {
     async jwt({ token, account, user }) {

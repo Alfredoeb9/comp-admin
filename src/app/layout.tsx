@@ -1,20 +1,19 @@
-"use client"
+'use client';
 
-import './globals.css'
-import Header from './components/Header'
-import Provider from './components/providers/SessionProvider'
-import { NextUIProvider } from '@nextui-org/react'
-import { getServerSession } from 'next-auth'
-import { useSession } from 'next-auth/react'
+import './globals.css';
+import Header from './components/Header';
+import Provider from './components/providers/SessionProvider';
+import { NextUIProvider } from '@nextui-org/react';
+import { getServerSession } from 'next-auth';
+import { useSession } from 'next-auth/react';
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-
   return (
-    <html lang="en">
+    <html lang='en'>
       <body>
         <NextUIProvider>
           <Provider>
@@ -24,5 +23,5 @@ export default function RootLayout({
         </NextUIProvider>
       </body>
     </html>
-  )
+  );
 }
