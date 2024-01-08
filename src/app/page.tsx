@@ -1,7 +1,15 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import { JSXElementConstructor, PromiseLikeOfReactNode, ReactElement, ReactNode, ReactPortal, useEffect, useState } from 'react';
+import {
+  JSXElementConstructor,
+  PromiseLikeOfReactNode,
+  ReactElement,
+  ReactNode,
+  ReactPortal,
+  useEffect,
+  useState,
+} from 'react';
 
 export default function Home() {
   const { data: data, status } = useSession();
@@ -10,23 +18,22 @@ export default function Home() {
 
   const fetchData = async () => {
     try {
-      const data = await fetch("/api/game-category");
+      const data = await fetch('/api/game-category');
 
       const response = await data.json();
 
-      console.log('res', response)
-  
+      console.log('res', response);
+
       setGames(response);
     } catch (error) {
-      console.log("error", error)
-      setError(error)
+      console.log('error', error);
+      setError(error);
     }
-    
-  }
+  };
 
   useEffect(() => {
     fetchData();
-  }, [])
+  }, []);
 
   if (data?.user.role !== 'admin') return null;
 
@@ -34,11 +41,25 @@ export default function Home() {
     <main className='flex min-h-screen flex-col items-center justify-between p-24'>
       <section>Welcome what would admin like to do?</section>
 
-      {games.map((game: { game: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | PromiseLikeOfReactNode | null | undefined; }, i: any) => (
-        <div key={i}>
-          {game.game}
-        </div>
-      ))}
+      {games.map(
+        (
+          game: {
+            game:
+              | string
+              | number
+              | boolean
+              | ReactElement<any, string | JSXElementConstructor<any>>
+              | Iterable<ReactNode>
+              | ReactPortal
+              | PromiseLikeOfReactNode
+              | null
+              | undefined;
+          },
+          i: any
+        ) => (
+          <div key={i}>{game.game}</div>
+        )
+      )}
       <div>{error && error}</div>
     </main>
   );
