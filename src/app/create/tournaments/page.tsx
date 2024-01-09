@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { CheckboxGroup, Checkbox, Select, SelectItem } from '@nextui-org/react';
 
 export default function CreateTournament() {
-  const [game, setGame] = useState<string>('');
+  const [title, setTitle] = useState<string>('');
   const [selected, setSelected] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | any>('');
@@ -17,9 +17,6 @@ export default function CreateTournament() {
 
       const response = await data.json();
 
-      console.log('res', response);
-
-      // setPlatforms(response.)
       setGames(response);
     } catch (error) {
       console.log('error', error);
@@ -33,41 +30,43 @@ export default function CreateTournament() {
 
   useEffect(() => {
     if (error.includes('Please change the name')) {
-      if (game !== previousGameName) {
+      if (title !== previousGameName) {
         setError('');
       }
     }
-  }, [error, game]);
+  }, [error, title]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
     try {
-      if (game === '' || selected.length === 0) {
+      if (title === '' || selected.length === 0) {
         setLoading(false);
         return setError('Please fill out the form');
       }
 
-      if (error.length !== 0 && previousGameName === game) {
+      if (error.length !== 0 && previousGameName === title) {
         setLoading(false);
         return setError('Error: Please change the name');
       }
 
       const newGame = {
-        game: game,
+        gameCategoryId: arrById[0]?.id,
+        game: title,
+        name: arrById[0]?.game,
         platforms: selected,
       };
 
-      const response = await fetch('/api/create/game', {
+      console.log("game", newGame)
+
+      const response = await fetch('/api/create/tournament', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(newGame),
       });
-
-      //   console.log("response", response)
 
       const awaitedDate = await response.json();
 
@@ -85,25 +84,15 @@ export default function CreateTournament() {
     }
   };
 
-  console.log("setGames", games)
-
-
   function filterByID(item: any) {
-    if (selectedGames === item.id) {
+    if (selectedGames === item?.id) {
       return true;
     }
   }
 
-  const arrById = games.filter(filterByID)
+  const arrById = games?.filter(filterByID)
 
   console.log("arrById", arrById)
-
-  // {games.map((game: any) => {
-  //   console.log("game", typeof game.platforms)
-  //   Object.values(game.platforms).map((platform: any, i: number) => {
-  //     console.log("plat", platform)
-  //   })
-  // })}
 
   return (
     <div className='darK:bg-slate-800 m-auto flex min-h-full w-96 flex-1 flex-col justify-center px-6 py-12 lg:px-8'>
@@ -117,8 +106,8 @@ export default function CreateTournament() {
             <input
               className='mt-2 block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
               type='text'
-              onChange={(e) => setGame(e.target.value)}
-              value={game}
+              onChange={(e) => setTitle(e.target.value)}
+              value={title}
             />
           </div>
           <div>
@@ -129,7 +118,7 @@ export default function CreateTournament() {
                 onSelectionChange={(e) => setSelectedGames(Object.values(e)[0]) }
               >
                 {games.map((game: any) => (
-                  <SelectItem key={game.id} value={game.game} onChange={(e) => console.log("test")}>
+                  <SelectItem key={game.id} value={game.game}>
                     {game.game}
                   </SelectItem>
                 ))}
@@ -150,7 +139,7 @@ export default function CreateTournament() {
           <button
             className='mt-4 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:bg-slate-500'
             disabled={
-              game.length === 0 ||
+              title.length === 0 ||
               selected.length === 0 ||
               loading ||
               error.includes('Please change the name')
