@@ -10,8 +10,23 @@ import {
   DropdownTrigger,
   Dropdown,
   DropdownMenu,
+  extendVariants,
 } from '@nextui-org/react';
 import { signOut, useSession } from 'next-auth/react';
+
+export const MyDropDown = extendVariants(DropdownItem, {
+  variants: {
+    color: {
+      default: {
+        wrapper: ['data-[hover=true]:bg-red-400'],
+      },
+      stone: {
+        wrapper: ['data-[hover=true]:bg-cyan-400'],
+        selectedIcon: ['data-[hover=true]:bg-cyan-400'],
+      },
+    },
+  },
+});
 
 export default function Header() {
   const { data: data, status } = useSession();
@@ -29,31 +44,38 @@ export default function Header() {
           data !== undefined &&
           data.user.role === 'admin' ? (
             <>
-              <Dropdown>
+              <Dropdown
+                showArrow
+                classNames={{
+                  base: 'before:bg-default-200', // change arrow background
+                  content:
+                    'border border-default-200 bg-gradient-to-br from-white to-default-200 dark:from-default-50 dark:to-black',
+                }}
+              >
                 <NavbarItem>
                   <DropdownTrigger>
                     <Button>Create</Button>
                   </DropdownTrigger>
                 </NavbarItem>
-                <DropdownMenu aria-label='create'>
+                <DropdownMenu
+                  aria-label='create'
+                  color='default'
+                  variant='light'
+                  className=''
+                >
                   <DropdownItem
                     key='tournaments'
-                    className='test hover:border-2 hover:border-pink-500'
+                    className='hover:bg-default-200'
                     aria-label='tournaments'
                   >
                     <Link href='/create/tournaments'>Tournaments</Link>
                   </DropdownItem>
                   <DropdownItem
-                    className=' border-pink-700'
+                    className='hover:bg-default-200'
                     key='game_category'
                     aria-label='game_category'
                   >
-                    <Link
-                      className=' border-pink-700'
-                      href='/create/game-category'
-                    >
-                      Game Category
-                    </Link>
+                    <Link href='/create/game-category'>Game Category</Link>
                   </DropdownItem>
                 </DropdownMenu>
               </Dropdown>
