@@ -142,8 +142,8 @@ export default function CreateTournament() {
             value={selected}
             onValueChange={setSelected}
           >
-            {arrById[0].platforms.map((platform: any, i: number) => (
-              <Checkbox value={platform}>{platform}</Checkbox>
+            {arrById[0]?.platforms.map((platform: any, i: number) => (
+              <Checkbox key={i} value={platform}>{platform}</Checkbox>
             ))}
           </CheckboxGroup>
 
