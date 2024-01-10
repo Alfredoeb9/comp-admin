@@ -10,6 +10,10 @@ export default function CreateTournament() {
   const [previousGameName, setPreviousGameName] = useState<string>('');
   const [games, setGames] = useState<any>([]);
   const [selectedGames, setSelectedGames] = useState<string>("");
+  const [tournamentType, setTournamentType] = useState<string>("");
+  const [entry, setEntry] = useState<string>("");
+  const [maxTeams, setMaxTeams] = useState<number | string>(0);
+  const [enrolled, setEnrolled] = useState<number | string>(0);
 
   const fetchData = async () => {
     try {
@@ -131,6 +135,47 @@ export default function CreateTournament() {
               <Checkbox key={i} value={platform}>{platform}</Checkbox>
             ))}
           </CheckboxGroup>
+
+          <div className='mb-2'>
+            <label className='block text-sm font-medium leading-6'>Tournament Type:</label>
+            <input
+              className='mt-2 block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+              type='text'
+              maxLength={120}
+              onChange={(e) => setTournamentType(e.target.value)}
+              value={tournamentType}
+            />
+          </div>
+
+          <div className='mb-2'>
+            <label className='block text-sm font-medium leading-6'>Entry:</label>
+            <input
+              className='mt-2 block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+              type='text'
+              onChange={(e) => setEntry(e.target.value)}
+              value={entry}
+            />
+          </div>
+
+          <div className='mb-2'>
+            <label className='block text-sm font-medium leading-6'>Max Teams:</label>
+            <input
+              className='mt-2 block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+              type='number'
+              onChange={(e) => setMaxTeams(e.target.value)}
+              value={maxTeams}
+            />
+          </div>
+
+          <div className='mb-2'>
+            <label className='block text-sm font-medium leading-6'>Enrolled:</label>
+            <input
+              className='mt-2 block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+              type='number'
+              onChange={(e) => setEnrolled(e.target.value)}
+              value={enrolled}
+            />
+          </div>
 
           <button
             className='mt-4 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:bg-slate-500'

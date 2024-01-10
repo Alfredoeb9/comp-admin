@@ -11,7 +11,11 @@ export async function POST(req: NextRequest) {
         name: bodier.name, 
         game: bodier.game,
         platforms: bodier.platforms,
-        gameCategoryId: bodier.gameCategoryId
+        gameCategoryId: bodier.gameCategoryId,
+        tournament_type: "community tournament",
+        entry: "4v4",
+        max_teams: 64,
+        enrolled: 0
       },
     });
 

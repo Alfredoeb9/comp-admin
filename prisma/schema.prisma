@@ -73,6 +73,7 @@ model Tournaments {
   tournament_type  String
   platforms        String[]
   entry            String
+  team_size        String
   max_teams        Int
   enrolled         Int
   GameCategory     GameCategory? @relation(fields: [gameCategoryId], references: [id])
