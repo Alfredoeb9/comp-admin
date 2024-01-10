@@ -1,8 +1,10 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { CheckboxGroup, Checkbox, Select, SelectItem } from '@nextui-org/react';
+import { useRouter } from 'next/navigation';
 
 export default function CreateTournament() {
+  const router = useRouter();
   const [title, setTitle] = useState<string>('');
   const [selected, setSelected] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -31,7 +33,8 @@ export default function CreateTournament() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+    
+  }, [router, entry]);
 
   useEffect(() => {
     if (error.includes('Please change the name')) {
@@ -85,6 +88,17 @@ export default function CreateTournament() {
         setError(awaitedDate.message);
       }
       setLoading(false);
+
+      setGames([]);
+      setTitle("");
+      setSelectedGames("");
+      setTournamentType("");
+      setEntry("");
+      setTeamSize("");
+      setMaxTeams(0);
+      setEnrolled(0);
+
+      router.push("/create/tournaments")
       return response;
     } catch (error) {
       console.log('game category error: ', error);
