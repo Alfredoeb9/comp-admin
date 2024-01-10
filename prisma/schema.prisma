@@ -67,10 +67,14 @@ model GameCategory {
 }
 
 model Tournaments {
-  id             String        @id @default(cuid())
-  name           String
-  game           String
-  platforms      String[]
-  GameCategory   GameCategory? @relation(fields: [gameCategoryId], references: [id])
-  gameCategoryId String?
+  id               String        @id @default(cuid())
+  name             String
+  game             String
+  tournament_type  String
+  platforms        String[]
+  entry            String
+  max_teams        Int
+  enrolled         Int
+  GameCategory     GameCategory? @relation(fields: [gameCategoryId], references: [id])
+  gameCategoryId   String?
 }
