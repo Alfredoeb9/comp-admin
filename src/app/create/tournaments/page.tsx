@@ -51,28 +51,26 @@ export default function CreateTournament() {
         return setError('Error: Please change the name');
       }
 
-      const newGame = {
+      const newTournament = {
         gameCategoryId: arrById[0]?.id,
         game: title,
         name: arrById[0]?.game,
         platforms: selected,
       };
 
-      console.log("game", newGame)
-
       const response = await fetch('/api/create/tournament', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(newGame),
+        body: JSON.stringify(newTournament),
       });
 
       const awaitedDate = await response.json();
 
       if (response.status === 500) {
         if (awaitedDate.message.includes('Sorry Game is already created')) {
-          setPreviousGameName(newGame.game);
+          setPreviousGameName(newTournament.game);
         }
         setError(awaitedDate.message);
       }
@@ -91,8 +89,6 @@ export default function CreateTournament() {
   }
 
   const arrById = games?.filter(filterByID)
-
-  console.log("arrById", arrById)
 
   return (
     <div className='darK:bg-slate-800 m-auto flex min-h-full w-96 flex-1 flex-col justify-center px-6 py-12 lg:px-8'>
