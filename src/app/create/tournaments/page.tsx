@@ -12,6 +12,7 @@ export default function CreateTournament() {
   const [selectedGames, setSelectedGames] = useState<string>("");
   const [tournamentType, setTournamentType] = useState<string>("");
   const [entry, setEntry] = useState<string>("");
+  const [teamSize, setTeamSize] = useState<string>("");
   const [maxTeams, setMaxTeams] = useState<number | string>(0);
   const [enrolled, setEnrolled] = useState<number | string>(0);
 
@@ -60,6 +61,11 @@ export default function CreateTournament() {
         game: title,
         name: arrById[0]?.game,
         platforms: selected,
+        tournament_type: tournamentType,
+        entry: entry,
+        team_size: teamSize,
+        max_teams: Number(maxTeams),
+        enrolled: Number(enrolled)
       };
 
       const response = await fetch('/api/create/tournament', {
@@ -154,6 +160,16 @@ export default function CreateTournament() {
               type='text'
               onChange={(e) => setEntry(e.target.value)}
               value={entry}
+            />
+          </div>
+
+          <div className='mb-2'>
+            <label className='block text-sm font-medium leading-6'>Team Size:</label>
+            <input
+              className='mt-2 block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+              type='text'
+              onChange={(e) => setTeamSize(e.target.value)}
+              value={teamSize}
             />
           </div>
 
