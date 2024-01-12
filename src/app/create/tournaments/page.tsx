@@ -13,6 +13,7 @@ export default function CreateTournament() {
   const [games, setGames] = useState<any>([]);
   const [selectedGames, setSelectedGames] = useState<string>("");
   const [tournamentType, setTournamentType] = useState<string>("");
+  const [startTime, setStartTime] = useState<string | number | readonly string[] | undefined>("2024-01-07T00:00");
   const [entry, setEntry] = useState<string>("");
   const [teamSize, setTeamSize] = useState<string>("");
   const [maxTeams, setMaxTeams] = useState<number | string>(0);
@@ -68,7 +69,8 @@ export default function CreateTournament() {
         entry: entry,
         team_size: teamSize,
         max_teams: Number(maxTeams),
-        enrolled: Number(enrolled)
+        enrolled: Number(enrolled),
+        start_time: startTime
       };
 
       const response = await fetch('/api/create/tournament', {
@@ -157,10 +159,24 @@ export default function CreateTournament() {
           </CheckboxGroup>
 
           <div className='mb-2'>
-            <label className='block text-sm font-medium leading-6'>Tournament Type:</label>
+            <label className='block text-sm font-medium leading-6' htmlFor={"start-time"} >Start Time:</label>
+            <input
+              className='mt-2 block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+              type="datetime-local"
+              id="start-time"
+              name="start-time"
+              min="2024-01-07T00:00"
+              onChange={(e) => setStartTime(e.target.value)}
+              value={startTime}
+            />
+          </div>
+
+          <div className='mb-2'>
+            <label className='block text-sm font-medium leading-6' htmlFor='tournament-type'>Tournament Type:</label>
             <input
               className='mt-2 block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
               type='text'
+              name="tournament-type"
               maxLength={120}
               onChange={(e) => setTournamentType(e.target.value)}
               value={tournamentType}

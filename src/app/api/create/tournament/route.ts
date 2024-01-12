@@ -16,7 +16,8 @@ export async function POST(req: NextRequest) {
         entry: bodier.entry,
         team_size: bodier.team_size,
         max_teams: bodier.max_teams,
-        enrolled: bodier.enrolled
+        enrolled: bodier.enrolled,
+        start_time: bodier.start_time
       },
     });
 
