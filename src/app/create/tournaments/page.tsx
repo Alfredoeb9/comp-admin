@@ -12,7 +12,8 @@ export default function CreateTournament() {
   const [previousGameName, setPreviousGameName] = useState<string>('');
   const [games, setGames] = useState<any>([]);
   const [selectedGames, setSelectedGames] = useState<string>("");
-  const [tournamentType, setTournamentType] = useState<string>("");
+  const [selectedTournamentType, setSelectedTournamentType] = useState<string | any>("");
+  const [tournamentType, setTournamentType] = useState<string[]>(["community tournaments", "cash matches", "xp matches"]);
   const [startTime, setStartTime] = useState<string | number | readonly string[] | undefined>("2024-01-07T00:00");
   const [entry, setEntry] = useState<string>("");
   const [teamSize, setTeamSize] = useState<string>("");
@@ -65,7 +66,7 @@ export default function CreateTournament() {
         game: title,
         name: arrById[0]?.game,
         platforms: selected,
-        tournament_type: tournamentType,
+        tournament_type: selectedTournamentType,
         entry: entry,
         team_size: teamSize,
         max_teams: Number(maxTeams),
@@ -94,9 +95,10 @@ export default function CreateTournament() {
       setGames([]);
       setTitle("");
       setSelectedGames("");
-      setTournamentType("");
+      setTournamentType(["community tournaments", "cash matches", "xp matches"]);
       setEntry("");
       setTeamSize("");
+      setSelectedTournamentType("");
       setMaxTeams(0);
       setEnrolled(0);
 
@@ -126,6 +128,7 @@ export default function CreateTournament() {
           <div className='mb-2'>
             <label className='block text-sm font-medium leading-6'>Title:</label>
             <input
+              required
               className='mt-2 block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
               type='text'
               onChange={(e) => setTitle(e.target.value)}
@@ -138,6 +141,7 @@ export default function CreateTournament() {
                 className="max-w-xs"
                 onChange={(e) => console.log("e", e)}
                 onSelectionChange={(e) => setSelectedGames(Object.values(e)[0]) }
+                required
               >
                 {games.map((game: any) => (
                   <SelectItem key={game.id} value={game.game}>
@@ -152,6 +156,7 @@ export default function CreateTournament() {
             className='block pt-2 text-sm font-medium leading-6'
             value={selected}
             onValueChange={setSelected}
+            isRequired
           >
             {arrById[0]?.platforms.map((platform: any, i: number) => (
               <Checkbox key={i} value={platform}>{platform}</Checkbox>
@@ -161,6 +166,7 @@ export default function CreateTournament() {
           <div className='mb-2'>
             <label className='block text-sm font-medium leading-6' htmlFor={"start-time"} >Start Time:</label>
             <input
+              required
               className='mt-2 block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
               type="datetime-local"
               id="start-time"
@@ -171,8 +177,10 @@ export default function CreateTournament() {
             />
           </div>
 
+
+
           <div className='mb-2'>
-            <label className='block text-sm font-medium leading-6' htmlFor='tournament-type'>Tournament Type:</label>
+            {/* <label className='block text-sm font-medium leading-6' htmlFor='tournament-type'>Tournament Type:</label>
             <input
               className='mt-2 block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
               type='text'
@@ -180,12 +188,27 @@ export default function CreateTournament() {
               maxLength={120}
               onChange={(e) => setTournamentType(e.target.value)}
               value={tournamentType}
-            />
+            /> */}
+
+              <Select 
+                label="Tournament Type" 
+                className="max-w-xs"
+                onChange={(e) => console.log("e", e)}
+                onSelectionChange={(e) => setSelectedTournamentType(e) }
+                required
+              >
+                {tournamentType.map((game: any, i: number) => (
+                  <SelectItem key={i} value={game}>
+                    {game}
+                  </SelectItem>
+                ))}
+              </Select>
           </div>
 
           <div className='mb-2'>
             <label className='block text-sm font-medium leading-6'>Entry:</label>
             <input
+              required
               className='mt-2 block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
               type='text'
               onChange={(e) => setEntry(e.target.value)}
@@ -196,6 +219,7 @@ export default function CreateTournament() {
           <div className='mb-2'>
             <label className='block text-sm font-medium leading-6'>Team Size:</label>
             <input
+              required
               className='mt-2 block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
               type='text'
               onChange={(e) => setTeamSize(e.target.value)}
@@ -206,6 +230,7 @@ export default function CreateTournament() {
           <div className='mb-2'>
             <label className='block text-sm font-medium leading-6'>Max Teams:</label>
             <input
+              required
               className='mt-2 block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
               type='number'
               onChange={(e) => setMaxTeams(e.target.value)}
@@ -216,6 +241,7 @@ export default function CreateTournament() {
           <div className='mb-2'>
             <label className='block text-sm font-medium leading-6'>Enrolled:</label>
             <input
+              required
               className='mt-2 block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
               type='number'
               onChange={(e) => setEnrolled(e.target.value)}
