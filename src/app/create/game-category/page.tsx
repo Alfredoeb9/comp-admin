@@ -44,8 +44,6 @@ export default function GameCategory() {
         body: JSON.stringify(newGame),
       });
 
-      //   console.log("response", response)
-
       const awaitedDate = await response.json();
 
       if (response.status === 500) {

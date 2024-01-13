@@ -66,17 +66,27 @@ model GameCategory {
   tournaments Tournaments[]
 }
 
+model Rules {
+  id            String       @id @default(cuid())
+  input         Json
+
+  Tournaments   Tournaments? @relation(fields: [tournamentsId], references: [id])
+  tournamentsId String?
+}
+
 model Tournaments {
-  id               String        @id @default(cuid())
-  name             String
-  game             String
-  tournament_type  String
-  platforms        String[]
-  entry            String
-  team_size        String
-  max_teams        Int
-  enrolled         Int
-  start_time       String
-  GameCategory     GameCategory? @relation(fields: [gameCategoryId], references: [id])
-  gameCategoryId   String?
+  id              String        @id @default(cuid())
+  name            String
+  game            String
+  tournament_type String
+  platforms       String[]
+  entry           String
+  team_size       String
+  max_teams       Int
+  enrolled        Int
+  start_time      String
+
+  infoId          Rules[]
+  GameCategory    GameCategory? @relation(fields: [gameCategoryId], references: [id])
+  gameCategoryId  String?
 }

@@ -4,6 +4,7 @@ import { CheckboxGroup, Checkbox, Select, SelectItem } from '@nextui-org/react';
 import { getCsrfToken } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import useSWR, { preload } from 'swr';
+import { Rules } from '@/lib/rules';
 
 const fetcher = async (url: string | URL | Request ) => {
   const res = await fetch(url);
@@ -40,6 +41,19 @@ export default function CreateTournament() {
   const [maxTeams, setMaxTeams] = useState<number | string>(0);
   const [enrolled, setEnrolled] = useState<number | string>(0);
   const [csrfToken, setCSRFToken] = useState<string | undefined>("");
+
+  useEffect(() => {
+    if (data?.length > 0) {
+      setGames(data);
+    }
+  }, [data])
+
+  useEffect(() => {
+    if (selectedGames.length > 0) {
+      //@ts-ignore
+      Rules.find((ele) => console.log(ele[arrById[0]?.game]))
+    }
+  }, [selectedGames])
 
   cToken.then((token) => {
     if (!token) throw new Error("Sorry please refresh")
@@ -81,6 +95,8 @@ export default function CreateTournament() {
         enrolled: Number(enrolled),
         start_time: startTime
       };
+
+      console.log("new", newTournament)
 
       const response = await fetch('/api/create/tournament', {
         method: 'POST',
@@ -126,6 +142,13 @@ export default function CreateTournament() {
 
   const arrById = games?.filter(filterByID)
 
+  
+  console.log("arrById", arrById)
+  /*
+    Shwoing the current rules set depeing on the game passed through
+  */
+ 
+  
   return (
     <div className='darK:bg-slate-800 m-auto flex min-h-full w-96 flex-1 flex-col justify-center px-6 py-12 lg:px-8'>
       <section className='w-full sm:max-w-md md:mt-0'>
@@ -202,17 +225,20 @@ export default function CreateTournament() {
               <Select 
                 label="Tournament Type" 
                 className="max-w-xs"
-                onChange={(e) => console.log("e", e)}
-                onSelectionChange={(e) => setSelectedTournamentType(e) }
+                // onChange={(e) => console.log("e", e)}
+                // onSelectionChange={(e) => setSelectedTournamentType(e) }
                 required
               >
-                {tournamentType.map((game: any, i: number) => (
-                  <SelectItem key={i} value={game}>
-                    {game}
+                {tournamentType.map((type: any, i: number) => (
+                  //@ts-ignore
+                  <SelectItem onClick={(e) => setSelectedTournamentType(e?.target?.textContent)} key={i} value={type}>
+                    {type}
                   </SelectItem>
                 ))}
               </Select>
           </div>
+
+          {/* {Rules.find((ele) => ele["testing"] as any === "testing")} */}
 
           <div className='mb-2'>
             <label className='block text-sm font-medium leading-6'>Entry:</label>
