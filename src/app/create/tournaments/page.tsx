@@ -1,28 +1,25 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { dehydrate, QueryClient } from '@tanstack/react-query'
 import { CheckboxGroup, Checkbox, Select, SelectItem } from '@nextui-org/react';
 import { getCsrfToken } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { fetchPosts } from '@/app/hooks';
-import useSWR from 'swr';
+import useSWR, { preload } from 'swr';
 
-async function getData() {
-  const res = await fetch('/api/game-category')
-  // The return value is *not* serialized
-  // You can return Date, Map, Set, etc.
- 
+const fetcher = async (url: string | URL | Request ) => {
+  const res = await fetch(url);
+
   if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error('Failed to fetch data')
+    const error = new Error("An error occurred while fetching the data.")
+
+    // error.info = await await res.json()
+    // error.status = res.status
+    throw error
   }
 
-  let data = await res.json();
- 
-  return data
+  return res.json();
 }
 
-const fetcher = (url: string | URL | Request) => fetch(url).then(r => r.json())
+preload('/api/game-category', fetcher)
 
 export default function CreateTournament() {
   const {data, isLoading, error} = useSWR('/api/game-category', fetcher)
