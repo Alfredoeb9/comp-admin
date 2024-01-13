@@ -1,4 +1,3 @@
-import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
@@ -13,7 +12,7 @@ export function middleware(request: NextRequest) {
   const allCookies = request.cookies.getAll();
   console.log('allCookies', allCookies);
 
-  if (!sessionCookie) {
+  if (!sessionCookie || !cookie) {
     return NextResponse.redirect(new URL('/auth/sign-in', request.url));
   }
 

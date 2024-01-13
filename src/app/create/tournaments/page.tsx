@@ -1,16 +1,39 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { dehydrate, QueryClient } from '@tanstack/react-query'
 import { CheckboxGroup, Checkbox, Select, SelectItem } from '@nextui-org/react';
+import { getCsrfToken } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { fetchPosts } from '@/app/hooks';
+import useSWR from 'swr';
+
+async function getData() {
+  const res = await fetch('/api/game-category')
+  // The return value is *not* serialized
+  // You can return Date, Map, Set, etc.
+ 
+  if (!res.ok) {
+    // This will activate the closest `error.js` Error Boundary
+    throw new Error('Failed to fetch data')
+  }
+
+  let data = await res.json();
+ 
+  return data
+}
+
+const fetcher = (url: string | URL | Request) => fetch(url).then(r => r.json())
 
 export default function CreateTournament() {
+  const {data, isLoading, error} = useSWR('/api/game-category', fetcher)
+  const cToken = getCsrfToken();
   const router = useRouter();
   const [title, setTitle] = useState<string>('');
   const [selected, setSelected] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | any>('');
+  const [clientError, setClientError] = useState<string | any>('');
   const [previousGameName, setPreviousGameName] = useState<string>('');
-  const [games, setGames] = useState<any>([]);
+  const [games, setGames] = useState<any[]>([] || data);
   const [selectedGames, setSelectedGames] = useState<string>("");
   const [selectedTournamentType, setSelectedTournamentType] = useState<string | any>("");
   const [tournamentType, setTournamentType] = useState<string[]>(["community tournaments", "cash matches", "xp matches"]);
@@ -19,46 +42,34 @@ export default function CreateTournament() {
   const [teamSize, setTeamSize] = useState<string>("");
   const [maxTeams, setMaxTeams] = useState<number | string>(0);
   const [enrolled, setEnrolled] = useState<number | string>(0);
+  const [csrfToken, setCSRFToken] = useState<string | undefined>("");
 
-  const fetchData = async () => {
-    try {
-      const data = await fetch('/api/game-category');
-
-      const response = await data.json();
-
-      setGames(response);
-    } catch (error) {
-      console.log('error', error);
-      setError(error);
-    }
-  };
+  cToken.then((token) => {
+    if (!token) throw new Error("Sorry please refresh")
+    setCSRFToken(token)
+  })
 
   useEffect(() => {
-    fetchData();
-    
-  }, [router, entry]);
-
-  useEffect(() => {
-    if (error.includes('Please change the name')) {
+    if (clientError.includes('Please change the name')) {
       if (title !== previousGameName) {
-        setError('');
+        setClientError('');
       }
     }
-  }, [error, title]);
+  }, [clientError, title]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setClientError('');
     setLoading(true);
     try {
       if (title === '' || selected.length === 0) {
         setLoading(false);
-        return setError('Please fill out the form');
+        return setClientError('Please fill out the form');
       }
 
-      if (error.length !== 0 && previousGameName === title) {
+      if (clientError.length !== 0 && previousGameName === title) {
         setLoading(false);
-        return setError('Error: Please change the name');
+        return setClientError('Error: Please change the name');
       }
 
       const newTournament = {
@@ -66,7 +77,7 @@ export default function CreateTournament() {
         game: title,
         name: arrById[0]?.game,
         platforms: selected,
-        tournament_type: selectedTournamentType,
+        tournament_type: String(selectedTournamentType),
         entry: entry,
         team_size: teamSize,
         max_teams: Number(maxTeams),
@@ -88,7 +99,7 @@ export default function CreateTournament() {
         if (awaitedDate.message.includes('Sorry Game is already created')) {
           setPreviousGameName(newTournament.game);
         }
-        setError(awaitedDate.message);
+        setClientError(awaitedDate.message);
       }
       setLoading(false);
 
@@ -106,7 +117,7 @@ export default function CreateTournament() {
       return response;
     } catch (error) {
       console.log('game category error: ', error);
-      return setError(error);
+      return setClientError(error);
     }
   };
 
@@ -125,6 +136,7 @@ export default function CreateTournament() {
           Create Tournament
         </h1>
         <form onSubmit={handleSubmit}>
+          <input type='hidden' name='_csrf' value={csrfToken} />
           <div className='mb-2'>
             <label className='block text-sm font-medium leading-6'>Title:</label>
             <input
@@ -143,7 +155,7 @@ export default function CreateTournament() {
                 onSelectionChange={(e) => setSelectedGames(Object.values(e)[0]) }
                 required
               >
-                {games.map((game: any) => (
+                {data?.map((game: any) => (
                   <SelectItem key={game.id} value={game.game}>
                     {game.game}
                   </SelectItem>
@@ -231,6 +243,7 @@ export default function CreateTournament() {
             <label className='block text-sm font-medium leading-6'>Max Teams:</label>
             <input
               required
+              min={2}
               className='mt-2 block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
               type='number'
               onChange={(e) => setMaxTeams(e.target.value)}
@@ -241,7 +254,7 @@ export default function CreateTournament() {
           <div className='mb-2'>
             <label className='block text-sm font-medium leading-6'>Enrolled:</label>
             <input
-              required
+              required              
               className='mt-2 block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
               type='number'
               onChange={(e) => setEnrolled(e.target.value)}
@@ -255,15 +268,30 @@ export default function CreateTournament() {
               title.length === 0 ||
               selected.length === 0 ||
               loading ||
-              error.includes('Please change the name')
+              clientError.includes('Please change the name')
             }
           >
             Create Game Category
           </button>
 
-          {error && <div className='pt-2 font-bold text-red-600'>{error}</div>}
+          {clientError && <div className='pt-2 font-bold text-red-600'>{clientError}</div>}
         </form>
       </section>
     </div>
   );
 }
+
+// export async function getStaticProps() {
+//   const queryClient = new QueryClient()
+
+//   await queryClient.prefetchQuery({
+//     queryKey: ['posts', 10],
+//     queryFn: () => fetchPosts(10),
+//   })
+
+//   return {
+//     props: {
+//       dehydratedState: dehydrate(queryClient),
+//     },
+//   }
+// }
