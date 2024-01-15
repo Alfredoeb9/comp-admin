@@ -29,7 +29,7 @@ model User {
   firstName     String
   lastName      String
   password      String
-  isAdmin       Boolean
+  isAdmin       Boolean         @default(false)
   role          String?         @default("user")
   isVerified    Boolean         @default(false)
   createdAt     DateTime        @default(now()) @map("created_at")
