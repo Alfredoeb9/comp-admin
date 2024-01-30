@@ -1,7 +1,7 @@
 export const Rules = [
     {
         "mw3": {
-            "pc player": ["Allowed", "Not Allowed"]
+            "pc player": ["Allowed", "Not Allowed"],
         },
 
         "fornight": {
@@ -9,7 +9,8 @@ export const Rules = [
         },
         
         "testing": {
-            "pc player": ["Allowed", "Not Allowed"]
+            "pc player": ["Allowed", "Not Allowed"],
+            "snaking": ["Allowed", "Not Allowed"]
         },
     }
 ]

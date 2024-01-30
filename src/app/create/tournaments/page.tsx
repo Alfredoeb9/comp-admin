@@ -5,6 +5,7 @@ import { getCsrfToken } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import useSWR, { preload } from 'swr';
 import { Rules } from '@/lib/rules';
+import AddDynamicInputFields from '@/app/components/DynamicInputField';
 
 const fetcher = async (url: string | URL | Request ) => {
   const res = await fetch(url);
@@ -41,6 +42,8 @@ export default function CreateTournament() {
   const [maxTeams, setMaxTeams] = useState<number | string>(0);
   const [enrolled, setEnrolled] = useState<number | string>(0);
   const [csrfToken, setCSRFToken] = useState<string | undefined>("");
+  const [gameRules, setGameRules] = useState<any[]>([]);
+  const [confirmedGameRules, setConfirmedGameRules] = useState<any>([]);
 
   useEffect(() => {
     if (data?.length > 0) {
@@ -48,12 +51,7 @@ export default function CreateTournament() {
     }
   }, [data])
 
-  useEffect(() => {
-    if (selectedGames.length > 0) {
-      //@ts-ignore
-      Rules.find((ele) => console.log(ele[arrById[0]?.game]))
-    }
-  }, [selectedGames])
+  console.log("gameRules", gameRules)
 
   cToken.then((token) => {
     if (!token) throw new Error("Sorry please refresh")
@@ -96,9 +94,9 @@ export default function CreateTournament() {
         start_time: startTime
       };
 
-      console.log("new", newTournament)
+      
 
-      const response = await fetch('/api/create/tournament', {
+      const response = await fetch('', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -134,6 +132,19 @@ export default function CreateTournament() {
     }
   };
 
+  function handleRuleChange(e: any, index: number) {
+    const activeData = document?.getElementById(String(index)) as HTMLInputElement;
+    console.log("active", activeData)
+    activeData.childNodes.forEach((child: any) => {
+      if (child?.checked === true) {
+        setConfirmedGameRules((confirmedGameRules: any) => [...confirmedGameRules, e.target.value])
+      } else {
+        setConfirmedGameRules(confirmedGameRules.filter((values: any) => values !== e.target.value))
+      }
+    })
+    
+  }
+
   function filterByID(item: any) {
     if (selectedGames === item?.id) {
       return true;
@@ -143,12 +154,23 @@ export default function CreateTournament() {
   const arrById = games?.filter(filterByID)
 
   
-  console.log("arrById", arrById)
+  // console.log("arrById", arrById)
+
+  useEffect(() => {
+    if (selectedGames.length > 0) {
+      //@ts-ignore
+      Rules.find((ele) => setGameRules(ele[arrById[0]?.game]))
+    }
+  }, [selectedGames, gameRules])
+
+  // Object.entries(gameRules).map((rule) => {
+  //   console.log("rule", rule)
+  // })
   /*
     Shwoing the current rules set depeing on the game passed through
   */
  
-  
+  console.log("confirmedGameRules", confirmedGameRules)
   return (
     <div className='darK:bg-slate-800 m-auto flex min-h-full w-96 flex-1 flex-col justify-center px-6 py-12 lg:px-8'>
       <section className='w-full sm:max-w-md md:mt-0'>
@@ -238,8 +260,6 @@ export default function CreateTournament() {
               </Select>
           </div>
 
-          {/* {Rules.find((ele) => ele["testing"] as any === "testing")} */}
-
           <div className='mb-2'>
             <label className='block text-sm font-medium leading-6'>Entry:</label>
             <input
@@ -272,6 +292,32 @@ export default function CreateTournament() {
               onChange={(e) => setMaxTeams(e.target.value)}
               value={maxTeams}
             />
+          </div>
+
+          <div className='mb-2'>
+            <label className='block text-sm font-medium leading-6'>Rules:</label>
+            {Object.entries(gameRules).map((rule, key: number) => (
+              <Select label={rule[0].charAt(0).toUpperCase() + rule[0].slice(1)} key={key} id={`${key}`} className='flex'>
+                {/* <label className='text-sm leading-6'>{rule[0].charAt(0).toUpperCase() + rule[0].slice(1)}</label> */}
+
+                {/* <CheckboxGroup
+                  // value={rule[1].}
+                  // onValueChange={setConfirmedGameRules}
+                > */}
+                  {rule[1].map((option: any, i: number) => (
+                    <SelectItem value={option} key={i}>
+                      {option}
+                      {/* <input type='checkbox' key={i} placeholder={option} value={option} onChange={(e) => handleRuleChange(e, i)} />
+                      <label>{option}</label>
+                      <div className='mt-2 block w-full rounded-md border-0 py-1.5 shadow-sm'></div> */}
+                    </SelectItem>
+                    
+                      // {option}
+                  ))}
+                {/* </CheckboxGroup>  */}
+              </Select>
+            ))}
+            {/* <AddDynamicInputFields /> */}
           </div>
 
           <div className='mb-2'>
