@@ -86,7 +86,7 @@ model Tournaments {
   enrolled        Int
   start_time      String
 
-  infoId          Rules[]
+  rules           Rules[]
   GameCategory    GameCategory? @relation(fields: [gameCategoryId], references: [id])
   gameCategoryId  String?
 }
