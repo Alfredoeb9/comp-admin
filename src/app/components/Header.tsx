@@ -83,8 +83,8 @@ export default function Header() {
                 <Button
                   as={Link}
                   color='primary'
-                  onClick={() => {
-                    signOut();
+                  onClick={async () => {
+                    await signOut();
                   }}
                   variant='flat'
                 >
