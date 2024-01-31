@@ -6,7 +6,6 @@ export async function POST(req: NextRequest) {
   try {
     const bodier = await req.json();
 
-    console.log("bodier", bodier)
     await db.tournaments.create({
       data: {
         name: bodier.name, 

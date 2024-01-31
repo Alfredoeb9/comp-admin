@@ -52,8 +52,6 @@ export default function CreateTournament() {
     }
   }, [data])
 
-  // console.log("gameRules", gameRules)
-
   cToken.then((token) => {
     if (!token) throw new Error("Sorry please refresh")
     setCSRFToken(token)
@@ -82,8 +80,6 @@ export default function CreateTournament() {
         return setClientError('Error: Please change the name');
       }
 
-      console.log("inside handle", confirmedGameRules)
-
       const newTournament = {
         gameCategoryId: arrById[0]?.id,
         game: title,
@@ -97,8 +93,6 @@ export default function CreateTournament() {
         start_time: startTime,
         rules: confirmedGameRules as Prisma.JsonArray
       };
-
-      console.log("new", newTournament)
 
       const response = await fetch('/api/create/tournament', {
         method: 'POST',
@@ -141,36 +135,19 @@ export default function CreateTournament() {
       [rule]: e
     }
     const findExistingItem = confirmedGameRules.find((item: any) => {
-      console.log(Object.entries(item)[0][0])
-      console.log('item2', rule)
       return Object.entries(item)[0][0] === rule
     })
 
-    // console.log("findExistingItem", findExistingItem)
-
-    const test = confirmedGameRules.filter((gameRule: any) => {
-      if(gameRule !== findExistingItem) {
-        return gameRule
-      }
-    })
-
-    console.log("test", test)
-
+    // if user changes value lets update correct array else create new array 
     if(findExistingItem) {
       confirmedGameRules.map((gameRule: any) => {
-        console.log(Object.entries(gameRule))
-        // setConfirmedGameRules([setRule])
-
         setConfirmedGameRules((prevState: any[]) => {
           // Loop over your list
           return prevState.map((item) => {
               // Check for the item with the specified id and update it
               return item === findExistingItem ? {...item, [rule]: e} : item
           })
-          })
-        // if(Object.entries(gameRule)[0][0] === rule) {
-        //   setConfirmedGameRules((prevState: any) => [...prevState, setRule])
-        // }
+        })
       })
     } else {
       setConfirmedGameRules((confirmedGameRules: any) => [...confirmedGameRules, setRule])
@@ -202,13 +179,6 @@ export default function CreateTournament() {
     }
   }, [selectedGames, gameRules])
 
-  // Object.entries(gameRules).map((rule) => {
-  //   console.log("rule", rule)
-  // })
-  /*
-    Shwoing the current rules set depeing on the game passed through
-  */
- console.log("confirmed", confirmedGameRules)
   return (
     <div className='darK:bg-slate-800 m-auto flex min-h-full w-96 flex-1 flex-col justify-center px-6 py-12 lg:px-8'>
       <section className='w-full sm:max-w-md md:mt-0'>
@@ -228,19 +198,19 @@ export default function CreateTournament() {
             />
           </div>
           <div>
-              <Select 
-                label="Select a Game" 
-                className="max-w-xs"
-                onChange={(e) => console.log("e", e)}
-                onSelectionChange={(e) => setSelectedGames(Object.values(e)[0]) }
-                required
-              >
-                {data?.map((game: any) => (
-                  <SelectItem key={game.id} value={game.game}>
-                    {game.game}
-                  </SelectItem>
-                ))}
-              </Select>
+            <Select 
+              label="Select a Game" 
+              className="max-w-xs"
+              onChange={(e) => console.log("e", e)}
+              onSelectionChange={(e) => setSelectedGames(Object.values(e)[0]) }
+              required
+            >
+              {data?.map((game: any) => (
+                <SelectItem key={game.id} value={game.game}>
+                  {game.game}
+                </SelectItem>
+              ))}
+            </Select>
           </div>
 
           <CheckboxGroup
@@ -272,30 +242,19 @@ export default function CreateTournament() {
 
 
           <div className='mb-2'>
-            {/* <label className='block text-sm font-medium leading-6' htmlFor='tournament-type'>Tournament Type:</label>
-            <input
-              className='mt-2 block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
-              type='text'
-              name="tournament-type"
-              maxLength={120}
-              onChange={(e) => setTournamentType(e.target.value)}
-              value={tournamentType}
-            /> */}
-
-              <Select 
-                label="Tournament Type" 
-                className="max-w-xs"
-                // onChange={(e) => console.log("e", e)}
-                // onSelectionChange={(e) => setSelectedTournamentType(e) }
-                required
-              >
-                {tournamentType.map((type: any, i: number) => (
-                  //@ts-ignore
-                  <SelectItem onClick={(e) => setSelectedTournamentType(e?.target?.textContent)} key={i} value={type}>
-                    {type}
-                  </SelectItem>
-                ))}
-              </Select>
+            <Select 
+              label="Tournament Type" 
+              className="max-w-xs"
+              // onChange={(e) => console.log("e", e)}
+              // onSelectionChange={(e) => setSelectedTournamentType(e) }
+              required
+            >
+              {tournamentType.map((type: any, i: number) => (
+                <SelectItem onClick={(e) => setSelectedTournamentType((e?.target as HTMLElement).textContent)} key={i} value={type}>
+                  {type}
+                </SelectItem>
+              ))}
+            </Select>
           </div>
 
           <div className='mb-2'>
@@ -337,25 +296,13 @@ export default function CreateTournament() {
             {Object.entries(gameRules).map((rule, key: number) => (
               <Select label={rule[0].charAt(0).toUpperCase() + rule[0].slice(1)} key={key} id={`${key}`} className='flex'>
                 {/* <label className='text-sm leading-6'>{rule[0].charAt(0).toUpperCase() + rule[0].slice(1)}</label> */}
-
-                {/* <CheckboxGroup
-                  // value={rule[1].}
-                  // onValueChange={setConfirmedGameRules}
-                > */}
                   {rule[1].map((option: any, i: number) => (
                     <SelectItem value={option} key={i} onPress={(e) => handleRuleChange((e.target as HTMLElement).innerText, rule[0], i)}>
                       {option}
-                      {/* <input type='checkbox' key={i} placeholder={option} value={option} onChange={(e) => handleRuleChange(e, i)} />
-                      <label>{option}</label>
-                      <div className='mt-2 block w-full rounded-md border-0 py-1.5 shadow-sm'></div> */}
                     </SelectItem>
-                    
-                      // {option}
                   ))}
-                {/* </CheckboxGroup>  */}
               </Select>
             ))}
-            {/* <AddDynamicInputFields /> */}
           </div>
 
           <div className='mb-2'>
