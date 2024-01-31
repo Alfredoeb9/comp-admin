@@ -6,6 +6,7 @@ export async function POST(req: NextRequest) {
   try {
     const bodier = await req.json();
 
+    console.log("bodier", bodier)
     await db.tournaments.create({
       data: {
         name: bodier.name, 
@@ -17,7 +18,8 @@ export async function POST(req: NextRequest) {
         team_size: bodier.team_size,
         max_teams: bodier.max_teams,
         enrolled: bodier.enrolled,
-        start_time: bodier.start_time
+        start_time: bodier.start_time,
+        rules: bodier.rules
       },
     });
 

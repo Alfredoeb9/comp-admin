@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import useSWR, { preload } from 'swr';
 import { Rules } from '@/lib/rules';
 import AddDynamicInputFields from '@/app/components/DynamicInputField';
+import { Prisma } from '@prisma/client';
 
 const fetcher = async (url: string | URL | Request ) => {
   const res = await fetch(url);
@@ -81,6 +82,8 @@ export default function CreateTournament() {
         return setClientError('Error: Please change the name');
       }
 
+      console.log("inside handle", confirmedGameRules)
+
       const newTournament = {
         gameCategoryId: arrById[0]?.id,
         game: title,
@@ -91,12 +94,13 @@ export default function CreateTournament() {
         team_size: teamSize,
         max_teams: Number(maxTeams),
         enrolled: Number(enrolled),
-        start_time: startTime
+        start_time: startTime,
+        rules: confirmedGameRules as Prisma.JsonArray
       };
 
-      
+      console.log("new", newTournament)
 
-      const response = await fetch('', {
+      const response = await fetch('/api/create/tournament', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

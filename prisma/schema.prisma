@@ -66,13 +66,13 @@ model GameCategory {
   tournaments Tournaments[]
 }
 
-model Rules {
-  id            String       @id @default(cuid())
-  input         Json
+// model Rules {
+//   id            String       @id @default(cuid())
+//   input         Json
 
-  Tournaments   Tournaments? @relation(fields: [tournamentsId], references: [id])
-  tournamentsId String?
-}
+//   Tournaments   Tournaments? @relation(fields: [tournamentsId], references: [id])
+//   tournamentsId String?
+// }
 
 model Tournaments {
   id              String        @id @default(cuid())
@@ -85,8 +85,7 @@ model Tournaments {
   max_teams       Int
   enrolled        Int
   start_time      String
-
-  rules           Rules[]
+  rules           Json[]
   GameCategory    GameCategory? @relation(fields: [gameCategoryId], references: [id])
   gameCategoryId  String?
 }
