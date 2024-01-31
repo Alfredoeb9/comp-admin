@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { CheckboxGroup, Checkbox, Select, SelectItem } from '@nextui-org/react';
 import { getCsrfToken } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
@@ -51,7 +51,7 @@ export default function CreateTournament() {
     }
   }, [data])
 
-  console.log("gameRules", gameRules)
+  // console.log("gameRules", gameRules)
 
   cToken.then((token) => {
     if (!token) throw new Error("Sorry please refresh")
@@ -132,16 +132,54 @@ export default function CreateTournament() {
     }
   };
 
-  function handleRuleChange(e: any, index: number) {
-    const activeData = document?.getElementById(String(index)) as HTMLInputElement;
-    console.log("active", activeData)
-    activeData.childNodes.forEach((child: any) => {
-      if (child?.checked === true) {
-        setConfirmedGameRules((confirmedGameRules: any) => [...confirmedGameRules, e.target.value])
-      } else {
-        setConfirmedGameRules(confirmedGameRules.filter((values: any) => values !== e.target.value))
+  function handleRuleChange(e: string, rule: string, index: number) {
+    let setRule = {
+      [rule]: e
+    }
+    const findExistingItem = confirmedGameRules.find((item: any) => {
+      console.log(Object.entries(item)[0][0])
+      console.log('item2', rule)
+      return Object.entries(item)[0][0] === rule
+    })
+
+    // console.log("findExistingItem", findExistingItem)
+
+    const test = confirmedGameRules.filter((gameRule: any) => {
+      if(gameRule !== findExistingItem) {
+        return gameRule
       }
     })
+
+    console.log("test", test)
+
+    if(findExistingItem) {
+      confirmedGameRules.map((gameRule: any) => {
+        console.log(Object.entries(gameRule))
+        // setConfirmedGameRules([setRule])
+
+        setConfirmedGameRules((prevState: any[]) => {
+          // Loop over your list
+          return prevState.map((item) => {
+              // Check for the item with the specified id and update it
+              return item === findExistingItem ? {...item, [rule]: e} : item
+          })
+          })
+        // if(Object.entries(gameRule)[0][0] === rule) {
+        //   setConfirmedGameRules((prevState: any) => [...prevState, setRule])
+        // }
+      })
+    } else {
+      setConfirmedGameRules((confirmedGameRules: any) => [...confirmedGameRules, setRule])
+    }
+    // const activeData = document?.getElementById(String(index)) as HTMLInputElement;
+    // console.log("active", activeData)
+    // activeData.childNodes.forEach((child: any) => {
+    //   if (child?.checked === true) {
+        
+    //   } else {
+    //     setConfirmedGameRules(confirmedGameRules.filter((values: any) => values !== e.target.value))
+    //   }
+    // })
     
   }
 
@@ -152,9 +190,6 @@ export default function CreateTournament() {
   }
 
   const arrById = games?.filter(filterByID)
-
-  
-  // console.log("arrById", arrById)
 
   useEffect(() => {
     if (selectedGames.length > 0) {
@@ -169,8 +204,7 @@ export default function CreateTournament() {
   /*
     Shwoing the current rules set depeing on the game passed through
   */
- 
-  console.log("confirmedGameRules", confirmedGameRules)
+ console.log("confirmed", confirmedGameRules)
   return (
     <div className='darK:bg-slate-800 m-auto flex min-h-full w-96 flex-1 flex-col justify-center px-6 py-12 lg:px-8'>
       <section className='w-full sm:max-w-md md:mt-0'>
@@ -305,7 +339,7 @@ export default function CreateTournament() {
                   // onValueChange={setConfirmedGameRules}
                 > */}
                   {rule[1].map((option: any, i: number) => (
-                    <SelectItem value={option} key={i}>
+                    <SelectItem value={option} key={i} onPress={(e) => handleRuleChange((e.target as HTMLElement).innerText, rule[0], i)}>
                       {option}
                       {/* <input type='checkbox' key={i} placeholder={option} value={option} onChange={(e) => handleRuleChange(e, i)} />
                       <label>{option}</label>
